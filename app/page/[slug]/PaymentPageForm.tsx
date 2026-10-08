@@ -1,7 +1,7 @@
 "use client";
 
 import { useState } from "react";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2, Lock } from "lucide-react";
 
 export default function PaymentPageForm({
   slug,
@@ -70,15 +70,15 @@ export default function PaymentPageForm({
   return (
     <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="rounded-lg bg-rose-50 p-3 text-xs text-rose-700 border border-rose-100">
+        <div className="rounded-xl bg-rose-50 p-3 text-xs text-rose-700 border border-rose-200">
           {error}
         </div>
       )}
 
       {amountMode === "FIXED" ? (
-        <div className="rounded-xl bg-blue-50/70 p-4 border border-blue-100 text-center">
-          <span className="text-xs text-slate-500 font-medium">Fixed Amount</span>
-          <div className="text-3xl font-extrabold text-blue-900 mt-0.5">
+        <div className="rounded-2xl bg-emerald-50/70 p-4 border border-emerald-100/80 text-center">
+          <span className="text-[11px] font-semibold text-emerald-800 uppercase tracking-wider">Fixed Price</span>
+          <div className="text-3xl font-black text-emerald-950 mt-0.5">
             ₹{fixedAmount?.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
           </div>
         </div>
@@ -95,7 +95,7 @@ export default function PaymentPageForm({
               value={customAmount}
               onChange={(e) => setCustomAmount(e.target.value)}
               placeholder="e.g. 500"
-              className="w-full rounded-xl border border-slate-200 pl-8 pr-3 py-2.5 text-sm font-semibold text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              className="w-full rounded-xl border border-slate-200 bg-white pl-8 pr-3 py-2.5 text-sm font-semibold text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
             />
           </div>
           <div className="mt-2 flex gap-2">
@@ -104,7 +104,7 @@ export default function PaymentPageForm({
                 type="button"
                 key={preset}
                 onClick={() => setCustomAmount(preset.toString())}
-                className="rounded-lg border border-slate-200 bg-slate-50 px-2.5 py-1 text-xs font-medium text-slate-600 hover:bg-slate-100"
+                className="rounded-xl border border-slate-200 bg-slate-50 px-3 py-1 text-xs font-semibold text-slate-700 hover:bg-emerald-50 hover:border-emerald-300 hover:text-emerald-700 transition"
               >
                 +₹{preset}
               </button>
@@ -121,7 +121,7 @@ export default function PaymentPageForm({
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="Rahul Verma"
-            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
           />
         </div>
 
@@ -133,7 +133,7 @@ export default function PaymentPageForm({
               value={email}
               onChange={(e) => setEmail(e.target.value)}
               placeholder="rahul@example.com"
-              className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
             />
           </div>
 
@@ -144,7 +144,7 @@ export default function PaymentPageForm({
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
               placeholder="9876543210"
-              className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+              className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
             />
           </div>
         </div>
@@ -153,20 +153,25 @@ export default function PaymentPageForm({
       <button
         type="submit"
         disabled={submitting}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white shadow-md hover:bg-blue-700 transition disabled:opacity-50"
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 py-3 text-xs font-bold text-white shadow-lg shadow-emerald-600/20 hover:bg-emerald-500 transition disabled:opacity-50"
       >
         {submitting ? (
           <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span>Connecting to UPI Gateway...</span>
+            <Loader2 className="h-4 w-4 animate-spin text-white" />
+            <span>Connecting to UPI...</span>
           </>
         ) : (
           <>
             <span>Proceed to UPI Payment</span>
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-3.5 w-3.5" />
           </>
         )}
       </button>
+
+      <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 pt-1">
+        <Lock className="h-3 w-3 text-emerald-600" />
+        <span>Secure 256-Bit Encrypted UPI Checkout</span>
+      </div>
     </form>
   );
 }

@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { ArrowRight, Loader2, Lock } from "lucide-react";
 
 export default function PaymentLinkForm({
   slug,
@@ -66,9 +66,9 @@ export default function PaymentLinkForm({
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-3.5">
+    <form onSubmit={handleSubmit} className="space-y-4">
       {error && (
-        <div className="rounded-lg bg-rose-50 p-2.5 text-xs text-rose-700 border border-rose-100">
+        <div className="rounded-xl bg-rose-50 p-3 text-xs text-rose-700 border border-rose-200">
           {error}
         </div>
       )}
@@ -82,7 +82,7 @@ export default function PaymentLinkForm({
             value={name}
             onChange={(e) => setName(e.target.value)}
             placeholder="e.g. Rahul Sharma"
-            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
           />
         </div>
       )}
@@ -96,7 +96,7 @@ export default function PaymentLinkForm({
             value={email}
             onChange={(e) => setEmail(e.target.value)}
             placeholder="rahul@example.com"
-            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
           />
         </div>
       )}
@@ -111,7 +111,7 @@ export default function PaymentLinkForm({
             value={phone}
             onChange={(e) => setPhone(e.target.value)}
             placeholder="9876543210"
-            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-500 focus:ring-1 focus:ring-blue-500"
+            className="mt-1 w-full rounded-xl border border-slate-200 bg-white px-3.5 py-2.5 text-xs text-slate-900 outline-none focus:border-emerald-500 focus:ring-2 focus:ring-emerald-500/20 transition"
           />
         </div>
       )}
@@ -119,20 +119,25 @@ export default function PaymentLinkForm({
       <button
         type="submit"
         disabled={submitting}
-        className="mt-4 flex w-full items-center justify-center gap-2 rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white shadow-md hover:bg-blue-700 transition disabled:opacity-50"
+        className="mt-4 flex w-full items-center justify-center gap-2 rounded-2xl bg-emerald-600 py-3 text-xs font-bold text-white shadow-lg shadow-emerald-600/20 hover:bg-emerald-500 transition disabled:opacity-50"
       >
         {submitting ? (
           <>
-            <Loader2 className="h-4 w-4 animate-spin" />
-            <span>Redirecting to UPI...</span>
+            <Loader2 className="h-4 w-4 animate-spin text-white" />
+            <span>Opening UPI Checkout...</span>
           </>
         ) : (
           <>
             <span>Proceed to Pay ₹{amount.toFixed(2)}</span>
-            <ArrowRight className="h-4 w-4" />
+            <ArrowRight className="h-3.5 w-3.5" />
           </>
         )}
       </button>
+
+      <div className="flex items-center justify-center gap-1.5 text-[11px] text-slate-400 pt-1">
+        <Lock className="h-3 w-3 text-emerald-600" />
+        <span>Secure 256-Bit Encrypted UPI Checkout</span>
+      </div>
     </form>
   );
 }

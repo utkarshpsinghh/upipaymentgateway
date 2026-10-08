@@ -253,7 +253,7 @@ export default function DevelopersPage() {
                     setNewlyCreatedKey(null);
                     setNewKeyModal(true);
                   }}
-                  className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 transition"
+                  className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2 text-xs font-semibold text-white shadow-sm hover:from-emerald-700 hover:to-teal-700 transition"
                 >
                   <Plus className="h-4 w-4" />
                   <span>Generate New Key</span>
@@ -261,15 +261,15 @@ export default function DevelopersPage() {
               </div>
 
               {/* Demo Notice */}
-              <div className="rounded-xl border border-blue-200 bg-blue-50/70 p-4 text-xs text-blue-900 flex items-start gap-3">
-                <ShieldCheck className="h-4 w-4 flex-shrink-0 text-blue-600 mt-0.5" />
+              <div className="rounded-xl border border-emerald-200 bg-emerald-50/70 p-4 text-xs text-emerald-950 flex items-start gap-3">
+                <ShieldCheck className="h-4 w-4 flex-shrink-0 text-emerald-600 mt-0.5" />
                 <div>
                   <span className="font-bold">Pre-configured Demo Secret Key:</span>
-                  <div className="mt-1 flex items-center gap-2 font-mono text-[11px] bg-white px-2.5 py-1 rounded-lg border border-blue-200 select-all">
+                  <div className="mt-1 flex items-center gap-2 font-mono text-[11px] bg-white px-2.5 py-1 rounded-lg border border-emerald-200 select-all">
                     <span>sk_test_swag_demo_7890abcdef123456</span>
                     <button
                       onClick={() => copyToClipboard("sk_test_swag_demo_7890abcdef123456")}
-                      className="ml-auto text-blue-600 font-semibold text-[10px]"
+                      className="ml-auto text-emerald-600 hover:text-emerald-800 font-semibold text-[10px]"
                     >
                       Copy
                     </button>
@@ -367,7 +367,7 @@ export default function DevelopersPage() {
                             value={keyName}
                             onChange={(e) => setKeyName(e.target.value)}
                             placeholder="e.g. Primary Node.js Backend"
-                            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-600"
+                            className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-emerald-500"
                           />
                         </div>
 
@@ -375,13 +375,13 @@ export default function DevelopersPage() {
                           <button
                             type="button"
                             onClick={() => setNewKeyModal(false)}
-                            className="flex-1 rounded-xl border border-slate-200 py-2 text-xs font-semibold text-slate-600"
+                            className="flex-1 rounded-xl border border-slate-200 py-2 text-xs font-semibold text-slate-600 hover:bg-slate-50"
                           >
                             Cancel
                           </button>
                           <button
                             type="submit"
-                            className="flex-1 rounded-xl bg-blue-600 py-2 text-xs font-semibold text-white hover:bg-blue-700"
+                            className="flex-1 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 py-2 text-xs font-semibold text-white hover:from-emerald-700 hover:to-teal-700 shadow-sm"
                           >
                             Generate
                           </button>
@@ -410,7 +410,7 @@ export default function DevelopersPage() {
                     disabled={pingStatus === "sending"}
                     className="flex items-center gap-1.5 rounded-xl border border-slate-200 px-3 py-1.5 text-xs font-semibold text-slate-700 hover:bg-slate-50 transition"
                   >
-                    <Send className="h-3.5 w-3.5 text-blue-600" />
+                    <Send className="h-3.5 w-3.5 text-emerald-600" />
                     <span>{pingStatus === "sending" ? "Sending..." : "Send Test Ping"}</span>
                   </button>
                 </div>
@@ -423,7 +423,7 @@ export default function DevelopersPage() {
                       value={testWebhookUrl}
                       onChange={(e) => setTestWebhookUrl(e.target.value)}
                       placeholder="https://yourdomain.com/api/webhooks/bharatpay"
-                      className="mt-1 w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs font-mono text-slate-900 outline-none focus:border-blue-600"
+                      className="mt-1 w-full rounded-xl border border-slate-200 px-3.5 py-2.5 text-xs font-mono text-slate-900 outline-none focus:border-emerald-500"
                     />
                   </div>
 
@@ -448,7 +448,7 @@ export default function DevelopersPage() {
 
                   <button
                     type="submit"
-                    className="rounded-xl bg-blue-600 px-4 py-2 text-xs font-bold text-white hover:bg-blue-700"
+                    className="rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2 text-xs font-bold text-white hover:from-emerald-700 hover:to-teal-700 shadow-sm"
                   >
                     Save Webhook URL
                   </button>
@@ -529,7 +529,7 @@ export default function DevelopersPage() {
                       required
                       value={simOrderId}
                       onChange={(e) => setSimOrderId(e.target.value)}
-                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-mono text-slate-900 outline-none focus:border-blue-600"
+                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs font-mono text-slate-900 outline-none focus:border-emerald-500"
                     />
                   </div>
 
@@ -540,7 +540,7 @@ export default function DevelopersPage() {
                       required
                       value={simAmount}
                       onChange={(e) => setSimAmount(e.target.value)}
-                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-600"
+                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-emerald-500"
                     />
                   </div>
 
@@ -550,14 +550,14 @@ export default function DevelopersPage() {
                       type="text"
                       value={simCustomerName}
                       onChange={(e) => setSimCustomerName(e.target.value)}
-                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-600"
+                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-emerald-500"
                     />
                   </div>
 
                   <button
                     type="submit"
                     disabled={simulating}
-                    className="w-full rounded-xl bg-blue-600 py-2.5 text-xs font-bold text-white hover:bg-blue-700 disabled:opacity-50"
+                    className="w-full rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 py-2.5 text-xs font-bold text-white hover:from-emerald-700 hover:to-teal-700 disabled:opacity-50 shadow-sm"
                   >
                     {simulating ? "Creating..." : "Create Test Payment via API"}
                   </button>

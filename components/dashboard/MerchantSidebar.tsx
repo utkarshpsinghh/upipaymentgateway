@@ -23,7 +23,7 @@ const navigation = [
   { name: "Payment Links", href: "/payment-links", icon: Link2 },
   { name: "Payment Pages", href: "/payment-pages", icon: FileText },
   { name: "Payment Buttons", href: "/payment-buttons", icon: SquareCode },
-  { name: "Settlements", href: "/settlements", icon: Building },
+  { name: "Bank Payouts", href: "/settlements", icon: Building },
   { name: "Reports", href: "/reports", icon: BarChart3 },
   { name: "Developers", href: "/developers", icon: Code2 },
   { name: "Settings", href: "/settings", icon: Settings },
@@ -49,12 +49,12 @@ export default function MerchantSidebar({
         {/* Brand header */}
         <div className="h-16 flex items-center px-6 border-b border-slate-100">
           <Link href="/dashboard" className="flex items-center gap-2.5">
-            <div className="flex h-8 w-8 items-center justify-center rounded-lg bg-blue-600 font-bold text-white text-sm">
+            <div className="flex h-9 w-9 items-center justify-center rounded-xl bg-gradient-to-tr from-emerald-600 to-teal-500 font-bold text-white text-base shadow-sm">
               ₹
             </div>
             <div>
               <span className="font-bold text-slate-900 text-sm leading-tight block">BharatUPI</span>
-              <span className="text-[10px] text-slate-500 font-medium">Merchant Console</span>
+              <span className="text-[10px] text-emerald-600 font-semibold uppercase tracking-wider">Merchant Hub</span>
             </div>
           </Link>
         </div>
@@ -87,7 +87,7 @@ export default function MerchantSidebar({
         </div>
 
         {/* Navigation list */}
-        <nav className="p-3 space-y-0.5">
+        <nav className="p-3 space-y-1">
           {navigation.map((item) => {
             const isActive = pathname === item.href || (item.href !== "/dashboard" && pathname.startsWith(item.href));
             const Icon = item.icon;
@@ -95,13 +95,13 @@ export default function MerchantSidebar({
               <Link
                 key={item.name}
                 href={item.href}
-                className={`flex items-center gap-3 px-3 py-2 rounded-lg text-xs font-semibold transition ${
+                className={`flex items-center gap-3 px-3 py-2.5 rounded-xl text-xs font-semibold transition ${
                   isActive
-                    ? "bg-blue-50 text-blue-700"
+                    ? "bg-emerald-50 text-emerald-800 font-bold shadow-xs"
                     : "text-slate-600 hover:bg-slate-50 hover:text-slate-900"
                 }`}
               >
-                <Icon className={`h-4 w-4 ${isActive ? "text-blue-700" : "text-slate-400"}`} />
+                <Icon className={`h-4 w-4 ${isActive ? "text-emerald-600" : "text-slate-400"}`} />
                 <span>{item.name}</span>
               </Link>
             );

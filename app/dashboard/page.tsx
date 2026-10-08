@@ -53,7 +53,7 @@ export default function MerchantDashboardPage() {
   if (loading) {
     return (
       <div className="flex h-screen items-center justify-center bg-slate-50">
-        <RefreshCw className="h-6 w-6 animate-spin text-blue-600" />
+        <RefreshCw className="h-6 w-6 animate-spin text-emerald-600" />
       </div>
     );
   }
@@ -64,7 +64,7 @@ export default function MerchantDashboardPage() {
   const chartData = data?.chartData || [];
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-slate-50/60">
       <MerchantSidebar
         merchantStatus={merchant.status}
         businessName={merchant.businessName}
@@ -77,16 +77,16 @@ export default function MerchantDashboardPage() {
           {/* Header */}
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-xl font-bold text-slate-900">Dashboard</h1>
+              <h1 className="text-xl font-bold text-slate-900 tracking-tight">Dashboard Overview</h1>
               <p className="text-xs text-slate-500">
-                Real-time UPI transaction metrics and ledger balance
+                Real-time UPI payment performance, collections, and available funds
               </p>
             </div>
 
             <div className="flex items-center gap-2.5">
               <Link
                 href="/payment-links"
-                className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-3.5 py-2 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 transition"
+                className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:from-emerald-700 hover:to-teal-700 transition"
               >
                 <Plus className="h-3.5 w-3.5" />
                 <span>Create Payment Link</span>
@@ -97,13 +97,13 @@ export default function MerchantDashboardPage() {
           {/* Top Metric Cards */}
           <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
             {/* Available Balance */}
-            <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs">
+            <div className="rounded-2xl border border-emerald-100 bg-gradient-to-b from-emerald-50/40 to-white p-5 shadow-xs">
               <span className="text-xs font-medium text-slate-500 block">Available Balance</span>
               <div className="mt-1 text-2xl font-extrabold text-slate-900 tabular-nums">
                 ₹{Number(cards.availableBalance || 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
               </div>
               <span className="mt-2 text-[11px] text-emerald-600 font-semibold block">
-                Calculated from double-entry ledger
+                Ready to transfer to bank
               </span>
             </div>
 
@@ -114,24 +114,24 @@ export default function MerchantDashboardPage() {
                 ₹{Number(cards.totalCollected || 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
               </div>
               <span className="mt-2 text-[11px] text-slate-400 block">
-                Gross UPI collections
+                All-time UPI payments
               </span>
             </div>
 
             {/* Pending Settlement */}
             <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs">
-              <span className="text-xs font-medium text-slate-500 block">Pending Settlement</span>
+              <span className="text-xs font-medium text-slate-500 block">Scheduled Payouts</span>
               <div className="mt-1 text-2xl font-extrabold text-slate-900 tabular-nums">
                 ₹{Number(cards.pendingSettlement || 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
               </div>
               <span className="mt-2 text-[11px] text-amber-600 font-semibold block">
-                Awaiting bank payout UTR
+                Processing bank transfer
               </span>
             </div>
 
             {/* Today's Payments */}
             <div className="rounded-2xl border border-slate-200/80 bg-white p-5 shadow-xs">
-              <span className="text-xs font-medium text-slate-500 block">Today's Volume</span>
+              <span className="text-xs font-medium text-slate-500 block">Today's Collections</span>
               <div className="mt-1 text-2xl font-extrabold text-slate-900 tabular-nums">
                 ₹{Number(cards.todayVolume || 0).toLocaleString("en-IN", { minimumFractionDigits: 2 })}
               </div>
@@ -143,7 +143,7 @@ export default function MerchantDashboardPage() {
 
           {/* Secondary Metric Strip */}
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-3">
-            <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3.5">
+            <div className="flex items-center gap-3 rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-xs">
               <div className="rounded-lg bg-emerald-50 p-2 text-emerald-600">
                 <CheckCircle2 className="h-4 w-4" />
               </div>
@@ -153,7 +153,7 @@ export default function MerchantDashboardPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3.5">
+            <div className="flex items-center gap-3 rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-xs">
               <div className="rounded-lg bg-amber-50 p-2 text-amber-600">
                 <Clock className="h-4 w-4" />
               </div>
@@ -163,7 +163,7 @@ export default function MerchantDashboardPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3.5">
+            <div className="flex items-center gap-3 rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-xs">
               <div className="rounded-lg bg-rose-50 p-2 text-rose-600">
                 <XCircle className="h-4 w-4" />
               </div>
@@ -173,8 +173,8 @@ export default function MerchantDashboardPage() {
               </div>
             </div>
 
-            <div className="flex items-center gap-3 rounded-xl border border-slate-200 bg-white p-3.5">
-              <div className="rounded-lg bg-blue-50 p-2 text-blue-600">
+            <div className="flex items-center gap-3 rounded-xl border border-slate-200/80 bg-white p-3.5 shadow-xs">
+              <div className="rounded-lg bg-indigo-50 p-2 text-indigo-600">
                 <TrendingUp className="h-4 w-4" />
               </div>
               <div>
@@ -198,8 +198,8 @@ export default function MerchantDashboardPage() {
                 <AreaChart data={chartData} margin={{ top: 10, right: 10, left: -20, bottom: 0 }}>
                   <defs>
                     <linearGradient id="volumeGrad" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="5%" stopColor="#0c8ee9" stopOpacity={0.2} />
-                      <stop offset="95%" stopColor="#0c8ee9" stopOpacity={0} />
+                      <stop offset="5%" stopColor="#10b981" stopOpacity={0.25} />
+                      <stop offset="95%" stopColor="#10b981" stopOpacity={0} />
                     </linearGradient>
                   </defs>
                   <CartesianGrid strokeDasharray="3 3" vertical={false} stroke="#f1f5f9" />
@@ -212,8 +212,8 @@ export default function MerchantDashboardPage() {
                   <Area
                     type="monotone"
                     dataKey="volume"
-                    stroke="#0c8ee9"
-                    strokeWidth={2}
+                    stroke="#10b981"
+                    strokeWidth={2.5}
                     fillOpacity={1}
                     fill="url(#volumeGrad)"
                   />
@@ -229,7 +229,7 @@ export default function MerchantDashboardPage() {
                 <h2 className="text-sm font-bold text-slate-900">Recent Transactions</h2>
                 <p className="text-xs text-slate-500">Latest UPI checkout and link payments</p>
               </div>
-              <Link href="/payments" className="text-xs font-semibold text-blue-600 hover:underline">
+              <Link href="/payments" className="text-xs font-semibold text-emerald-600 hover:text-emerald-700 hover:underline">
                 View all payments
               </Link>
             </div>
@@ -296,7 +296,7 @@ export default function MerchantDashboardPage() {
                             href={`/pay/${p.id}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-800 font-semibold"
+                            className="text-emerald-600 hover:text-emerald-800 font-semibold"
                           >
                             Checkout ↗
                           </a>

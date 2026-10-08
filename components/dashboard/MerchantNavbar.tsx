@@ -28,7 +28,7 @@ export default function MerchantNavbar({
           <div className="text-[10px] text-slate-400">Approved Merchant Portal</div>
         </div>
 
-        <div className="h-8 w-8 rounded-full bg-blue-100 flex items-center justify-center font-bold text-xs text-blue-700">
+        <div className="h-9 w-9 rounded-xl bg-emerald-100 border border-emerald-200 flex items-center justify-center font-bold text-xs text-emerald-800 shadow-xs">
           {(userEmail || "M").slice(0, 1).toUpperCase()}
         </div>
       </div>

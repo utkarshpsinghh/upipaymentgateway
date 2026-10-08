@@ -42,7 +42,7 @@ export default function PaymentsPage() {
   }, []);
 
   const handleRefund = async (paymentId: string) => {
-    if (!confirm("Are you sure you want to refund this payment? This will debit your ledger.")) return;
+    if (!confirm("Are you sure you want to refund this payment to the customer?")) return;
     setRefundLoading(true);
     try {
       const res = await fetch(`/api/v1/payments/${paymentId}/refund`, {
@@ -58,7 +58,7 @@ export default function PaymentsPage() {
       if (!res.ok) {
         alert(data.error || "Refund failed");
       } else {
-        alert("Payment refunded successfully! Ledger debited.");
+        alert("Payment refunded successfully!");
         fetchPayments();
         setSelectedPayment(null);
       }
@@ -80,7 +80,7 @@ export default function PaymentsPage() {
   });
 
   return (
-    <div className="flex min-h-screen bg-slate-50">
+    <div className="flex min-h-screen bg-slate-50/60">
       <MerchantSidebar businessName="Swag Fashion Retail" />
 
       <div className="flex-1 flex flex-col min-w-0">
@@ -89,9 +89,9 @@ export default function PaymentsPage() {
         <main className="p-6 sm:p-8 space-y-6 max-w-7xl">
           <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
             <div>
-              <h1 className="text-xl font-bold text-slate-900">Payments</h1>
+              <h1 className="text-xl font-bold text-slate-900 tracking-tight">Payments & Transactions</h1>
               <p className="text-xs text-slate-500">
-                Detailed ledger of all UPI intent, QR, and hosted checkout transactions
+                Real-time records of all UPI, QR code, and customer checkout transactions
               </p>
             </div>
           </div>
@@ -105,7 +105,7 @@ export default function PaymentsPage() {
                 placeholder="Search Payment ID, Order ID, Customer..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="w-full rounded-xl border border-slate-200 pl-9 pr-3 py-1.5 text-xs text-slate-900 outline-none focus:border-blue-600"
+                className="w-full rounded-xl border border-slate-200 pl-9 pr-3 py-1.5 text-xs text-slate-900 outline-none focus:border-emerald-500"
               />
             </div>
 
@@ -196,7 +196,7 @@ export default function PaymentsPage() {
                             href={`/pay/${p.id}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-800 font-semibold"
+                            className="text-emerald-600 hover:text-emerald-800 font-semibold"
                           >
                             Checkout ↗
                           </a>

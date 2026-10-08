@@ -1,10 +1,8 @@
 "use client";
 
 import { useEffect, useState, use } from "react";
-import Image from "next/image";
 import { 
   ShieldCheck, 
-  AlertCircle, 
   CheckCircle2, 
   XCircle, 
   QrCode, 
@@ -13,7 +11,10 @@ import {
   Lock, 
   RefreshCw, 
   ArrowRight,
-  Clock
+  Clock,
+  Copy,
+  Check,
+  Zap
 } from "lucide-react";
 
 interface PaymentData {
@@ -49,6 +50,7 @@ export default function HostedCheckoutPage({
   const [vpaInput, setVpaInput] = useState("");
   const [processing, setProcessing] = useState(false);
   const [timeLeft, setTimeLeft] = useState(899); // ~15 mins countdown
+  const [copiedVpa, setCopiedVpa] = useState(false);
 
   const fetchPayment = async () => {
     try {
@@ -86,7 +88,7 @@ export default function HostedCheckoutPage({
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify({
           status,
-          upiVpa: vpaInput || "rahul@okaxis",
+          upiVpa: vpaInput || "payer@okaxis",
         }),
       });
       const data = await res.json();
@@ -113,6 +115,12 @@ export default function HostedCheckoutPage({
     }
   };
 
+  const copyUpiId = () => {
+    navigator.clipboard.writeText("test-merchant@bharatupi");
+    setCopiedVpa(true);
+    setTimeout(() => setCopiedVpa(false), 2000);
+  };
+
   const formatTimer = (seconds: number) => {
     const m = Math.floor(seconds / 60);
     const s = seconds % 60;
@@ -121,10 +129,10 @@ export default function HostedCheckoutPage({
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-100 p-4">
-        <div className="flex items-center gap-3 rounded-xl bg-white p-6 shadow-sm">
-          <RefreshCw className="h-6 w-6 animate-spin text-blue-600" />
-          <span className="text-sm font-medium text-slate-600">Initializing secure UPI checkout...</span>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4 font-sans">
+        <div className="flex flex-col items-center gap-3 rounded-2xl bg-white p-8 shadow-xl border border-slate-200/80">
+          <RefreshCw className="h-8 w-8 animate-spin text-emerald-600" />
+          <span className="text-xs font-semibold text-slate-700">Opening secure UPI checkout...</span>
         </div>
       </div>
     );
@@ -132,46 +140,46 @@ export default function HostedCheckoutPage({
 
   if (error || !payment) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-100 p-4">
-        <div className="max-w-md rounded-2xl bg-white p-8 text-center shadow-lg">
-          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-full bg-red-50 text-red-600">
-            <XCircle className="h-8 w-8" />
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4 font-sans">
+        <div className="max-w-md w-full rounded-2xl bg-white p-8 text-center shadow-xl border border-slate-200/80">
+          <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-rose-600">
+            <XCircle className="h-7 w-7" />
           </div>
-          <h2 className="text-xl font-bold text-slate-900">Payment Unavailable</h2>
-          <p className="mt-2 text-sm text-slate-600">{error || "Unable to retrieve payment information."}</p>
+          <h2 className="text-xl font-bold text-slate-900">Payment Request Unavailable</h2>
+          <p className="mt-2 text-xs text-slate-500">{error || "Unable to retrieve payment information."}</p>
         </div>
       </div>
     );
   }
 
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-100/80 p-2 sm:p-4">
-      {/* Test Mode Banner */}
-      <div className="mb-3 flex items-center gap-2 rounded-full border border-amber-300 bg-amber-50 px-4 py-1 text-xs font-semibold text-amber-800 shadow-sm">
-        <span className="flex h-2 w-2 rounded-full bg-amber-500 animate-pulse" />
-        TEST MODE SIMULATOR • No actual funds will be debited
+    <div className="flex min-h-screen flex-col items-center justify-center bg-slate-100/90 p-3 sm:p-6 font-sans">
+      {/* Test Sandbox Pill */}
+      <div className="mb-3.5 flex items-center gap-2 rounded-full border border-emerald-300 bg-emerald-50 px-4 py-1 text-[11px] font-bold text-emerald-800 shadow-xs">
+        <span className="flex h-2 w-2 rounded-full bg-emerald-500 animate-pulse" />
+        <span>TEST MODE • Test checkout sandbox</span>
       </div>
 
-      <div className="w-full max-w-md overflow-hidden rounded-2xl border border-slate-200/80 bg-white shadow-xl transition-all">
+      <div className="w-full max-w-md overflow-hidden rounded-3xl border border-slate-200/80 bg-white shadow-2xl transition-all">
         {/* Header */}
-        <div className="border-b border-slate-100 bg-gradient-to-b from-slate-50 to-white p-5">
+        <div className="border-b border-slate-100 bg-gradient-to-b from-slate-50 to-white p-5 sm:p-6">
           <div className="flex items-center justify-between">
-            <div className="flex items-center gap-2.5">
-              <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-blue-600 font-bold text-white shadow-sm shadow-blue-500/20">
+            <div className="flex items-center gap-3">
+              <div className="flex h-11 w-11 items-center justify-center rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 font-black text-slate-950 shadow-md shadow-emerald-500/20">
                 {payment.merchantName.slice(0, 2).toUpperCase()}
               </div>
               <div>
-                <h1 className="text-base font-bold text-slate-900 leading-tight">
+                <h1 className="text-sm font-bold text-slate-900 leading-tight">
                   {payment.merchantName}
                 </h1>
-                <p className="text-xs text-slate-500">Order: {payment.merchantOrderId}</p>
+                <p className="text-[11px] text-slate-500 font-mono">Order: {payment.merchantOrderId}</p>
               </div>
             </div>
             <div className="text-right">
-              <div className="text-2xl font-extrabold text-slate-900 tabular-nums">
+              <div className="text-2xl font-black text-slate-900 tabular-nums">
                 ₹{payment.amount.toLocaleString("en-IN", { minimumFractionDigits: 2 })}
               </div>
-              <div className="flex items-center justify-end gap-1 text-[11px] font-medium text-slate-400">
+              <div className="flex items-center justify-end gap-1 text-[11px] font-semibold text-amber-700 bg-amber-50 px-2 py-0.5 rounded-full mt-0.5">
                 <Clock className="h-3 w-3" />
                 <span>{formatTimer(timeLeft)}</span>
               </div>
@@ -179,7 +187,7 @@ export default function HostedCheckoutPage({
           </div>
 
           {payment.description && (
-            <div className="mt-3 rounded-lg bg-slate-50 px-3 py-1.5 text-xs text-slate-600 border border-slate-100">
+            <div className="mt-3.5 rounded-xl bg-slate-50 px-3.5 py-2 text-xs text-slate-600 border border-slate-100">
               {payment.description}
             </div>
           )}
@@ -188,68 +196,68 @@ export default function HostedCheckoutPage({
         {/* Status Views */}
         {payment.status === "SUCCESS" ? (
           <div className="p-8 text-center animate-in fade-in zoom-in-95 duration-200">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-emerald-50 text-emerald-600 ring-8 ring-emerald-50/50">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-emerald-50 text-emerald-600 ring-8 ring-emerald-50/50">
               <CheckCircle2 className="h-10 w-10" />
             </div>
-            <h2 className="text-2xl font-bold text-slate-900">Payment Successful!</h2>
-            <p className="mt-1 text-sm text-slate-500">
+            <h2 className="text-2xl font-extrabold text-slate-900">Payment Successful!</h2>
+            <p className="mt-1 text-sm font-bold text-emerald-600">
               ₹{payment.amount.toFixed(2)} paid via UPI
             </p>
 
-            <div className="mt-6 rounded-xl border border-slate-100 bg-slate-50 p-4 text-left text-xs">
+            <div className="mt-6 rounded-2xl border border-slate-100 bg-slate-50/80 p-4 text-left text-xs space-y-2">
               <div className="flex justify-between py-1 border-b border-slate-200/60">
-                <span className="text-slate-500">Payment ID</span>
+                <span className="text-slate-500">Transaction ID</span>
                 <span className="font-mono font-medium text-slate-800">{payment.id}</span>
               </div>
               <div className="flex justify-between py-1 border-b border-slate-200/60">
-                <span className="text-slate-500">UPI Ref (RRN)</span>
+                <span className="text-slate-500">Bank Reference (UTR)</span>
                 <span className="font-mono font-bold text-slate-900">{payment.rrn || "628290184712"}</span>
               </div>
               <div className="flex justify-between py-1">
                 <span className="text-slate-500">Status</span>
-                <span className="font-semibold text-emerald-600">COMPLETED</span>
+                <span className="font-bold text-emerald-600">SUCCESS</span>
               </div>
             </div>
 
             <p className="mt-6 text-xs text-slate-400">
-              Receipt sent to {payment.customerEmail || "customer email"}. You can safely close this window.
+              Receipt sent to customer. You can safely close this window.
             </p>
           </div>
         ) : payment.status === "FAILED" ? (
           <div className="p-8 text-center animate-in fade-in zoom-in-95 duration-200">
-            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-full bg-rose-50 text-rose-600 ring-8 ring-rose-50/50">
+            <div className="mx-auto mb-4 flex h-16 w-16 items-center justify-center rounded-2xl bg-rose-50 text-rose-600 ring-8 ring-rose-50/50">
               <XCircle className="h-10 w-10" />
             </div>
-            <h2 className="text-2xl font-bold text-slate-900">Payment Failed</h2>
-            <p className="mt-1 text-sm text-slate-500">
+            <h2 className="text-2xl font-extrabold text-slate-900">Payment Failed</h2>
+            <p className="mt-1 text-xs text-slate-500">
               Transaction was declined or cancelled.
             </p>
 
             <button
               onClick={() => handleSimulateStatus("SUCCESS")}
               disabled={processing}
-              className="mt-6 w-full rounded-xl bg-blue-600 py-3 text-sm font-semibold text-white shadow-md hover:bg-blue-700 transition"
+              className="mt-6 w-full rounded-2xl bg-emerald-600 py-3 text-xs font-bold text-white shadow-md hover:bg-emerald-500 transition"
             >
               Retry Payment
             </button>
           </div>
         ) : (
-          <div className="p-5">
-            {/* Tabs */}
-            <div className="flex rounded-xl bg-slate-100 p-1 text-xs font-semibold text-slate-600">
+          <div className="p-5 sm:p-6">
+            {/* Payment Method Tabs */}
+            <div className="flex rounded-2xl bg-slate-100 p-1 text-xs font-semibold text-slate-600">
               <button
                 onClick={() => setActiveTab("qr")}
-                className={`flex flex-1 items-center justify-center gap-1.5 py-2 rounded-lg transition ${
-                  activeTab === "qr" ? "bg-white text-blue-700 shadow-sm" : "hover:text-slate-900"
+                className={`flex flex-1 items-center justify-center gap-1.5 py-2.5 rounded-xl transition ${
+                  activeTab === "qr" ? "bg-white text-emerald-700 shadow-xs font-bold" : "hover:text-slate-900"
                 }`}
               >
                 <QrCode className="h-4 w-4" />
-                <span>UPI QR</span>
+                <span>Scan QR</span>
               </button>
               <button
                 onClick={() => setActiveTab("intent")}
-                className={`flex flex-1 items-center justify-center gap-1.5 py-2 rounded-lg transition ${
-                  activeTab === "intent" ? "bg-white text-blue-700 shadow-sm" : "hover:text-slate-900"
+                className={`flex flex-1 items-center justify-center gap-1.5 py-2.5 rounded-xl transition ${
+                  activeTab === "intent" ? "bg-white text-emerald-700 shadow-xs font-bold" : "hover:text-slate-900"
                 }`}
               >
                 <Smartphone className="h-4 w-4" />
@@ -257,8 +265,8 @@ export default function HostedCheckoutPage({
               </button>
               <button
                 onClick={() => setActiveTab("vpa")}
-                className={`flex flex-1 items-center justify-center gap-1.5 py-2 rounded-lg transition ${
-                  activeTab === "vpa" ? "bg-white text-blue-700 shadow-sm" : "hover:text-slate-900"
+                className={`flex flex-1 items-center justify-center gap-1.5 py-2.5 rounded-xl transition ${
+                  activeTab === "vpa" ? "bg-white text-emerald-700 shadow-xs font-bold" : "hover:text-slate-900"
                 }`}
               >
                 <AtSign className="h-4 w-4" />
@@ -268,30 +276,41 @@ export default function HostedCheckoutPage({
 
             {/* Tab 1: QR Code */}
             {activeTab === "qr" && (
-              <div className="mt-5 flex flex-col items-center">
-                <div className="relative rounded-2xl border border-slate-200 bg-white p-3 shadow-inner">
+              <div className="mt-6 flex flex-col items-center">
+                <div className="relative rounded-3xl border-2 border-emerald-500/20 bg-white p-3.5 shadow-lg">
                   {payment.qrDataUrl ? (
                     <img
                       src={payment.qrDataUrl}
                       alt="UPI QR Code"
-                      width={220}
-                      height={220}
-                      className="rounded-lg"
+                      width={210}
+                      height={210}
+                      className="rounded-2xl"
                     />
                   ) : (
-                    <div className="flex h-56 w-56 items-center justify-center text-xs text-slate-400">
+                    <div className="flex h-52 w-52 items-center justify-center text-xs text-slate-400">
                       Generating QR...
                     </div>
                   )}
                   <div className="absolute inset-0 flex items-center justify-center pointer-events-none">
-                    <div className="rounded-lg bg-white/90 p-1.5 shadow-sm border border-slate-100">
-                      <span className="text-[10px] font-bold text-blue-700">UPI</span>
+                    <div className="rounded-xl bg-white px-2 py-1 shadow-md border border-slate-200">
+                      <span className="text-[11px] font-black tracking-wider text-emerald-700">UPI</span>
                     </div>
                   </div>
                 </div>
 
-                <p className="mt-3 text-xs font-medium text-slate-500 text-center">
-                  Scan with any UPI app: Google Pay, PhonePe, Paytm, BHIM, CRED
+                <div className="mt-4 flex items-center gap-2 rounded-xl bg-slate-50 border border-slate-200 px-3 py-1.5 text-xs text-slate-700">
+                  <span className="font-mono text-[11px]">test-merchant@bharatupi</span>
+                  <button
+                    onClick={copyUpiId}
+                    className="text-emerald-600 hover:text-emerald-700 font-semibold"
+                    title="Copy UPI ID"
+                  >
+                    {copiedVpa ? <Check className="h-3.5 w-3.5" /> : <Copy className="h-3.5 w-3.5" />}
+                  </button>
+                </div>
+
+                <p className="mt-3 text-[11px] font-medium text-slate-500 text-center">
+                  Scan using Google Pay, PhonePe, Paytm, BHIM, or any banking app
                 </p>
               </div>
             )}
@@ -301,31 +320,42 @@ export default function HostedCheckoutPage({
               <div className="mt-5 space-y-3">
                 <a
                   href={payment.upiUri}
-                  className="flex items-center justify-between rounded-xl border border-slate-200 p-3.5 hover:border-blue-400 hover:bg-blue-50/40 transition group"
+                  className="flex items-center justify-between rounded-2xl border border-emerald-500/30 bg-emerald-50/50 p-4 hover:bg-emerald-50 transition group"
                 >
                   <div className="flex items-center gap-3">
-                    <div className="flex h-9 w-9 items-center justify-center rounded-lg bg-slate-900 text-white font-bold text-xs">
+                    <div className="flex h-10 w-10 items-center justify-center rounded-xl bg-emerald-600 text-white font-bold text-xs shadow-sm">
                       UPI
                     </div>
                     <div>
-                      <div className="text-sm font-semibold text-slate-800">Open Default UPI App</div>
-                      <div className="text-xs text-slate-500">Tap to launch PhonePe, GPay, or Paytm</div>
+                      <div className="text-xs font-bold text-slate-900">Open Installed UPI App</div>
+                      <div className="text-[11px] text-slate-500">Tap to launch PhonePe, GPay, or Paytm</div>
                     </div>
                   </div>
-                  <ArrowRight className="h-4 w-4 text-slate-400 group-hover:text-blue-600 transition" />
+                  <ArrowRight className="h-4 w-4 text-emerald-600 group-hover:translate-x-0.5 transition" />
                 </a>
 
                 <div className="grid grid-cols-3 gap-2 pt-2">
-                  {["Google Pay", "PhonePe", "Paytm"].map((app) => (
-                    <a
-                      key={app}
-                      href={payment.upiUri}
-                      className="flex flex-col items-center justify-center rounded-xl border border-slate-100 bg-slate-50/60 p-3 text-center hover:bg-slate-100 transition"
-                    >
-                      <span className="text-xs font-bold text-slate-700">{app}</span>
-                      <span className="text-[10px] text-slate-400">Installed</span>
-                    </a>
-                  ))}
+                  <a
+                    href={payment.upiUri}
+                    className="flex flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white p-3 text-center hover:border-emerald-500 transition shadow-2xs"
+                  >
+                    <span className="text-xs font-bold text-indigo-600">Google Pay</span>
+                    <span className="text-[10px] text-slate-400 mt-0.5">Pay via GPay</span>
+                  </a>
+                  <a
+                    href={payment.upiUri}
+                    className="flex flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white p-3 text-center hover:border-emerald-500 transition shadow-2xs"
+                  >
+                    <span className="text-xs font-bold text-purple-600">PhonePe</span>
+                    <span className="text-[10px] text-slate-400 mt-0.5">Pay via PhonePe</span>
+                  </a>
+                  <a
+                    href={payment.upiUri}
+                    className="flex flex-col items-center justify-center rounded-2xl border border-slate-200 bg-white p-3 text-center hover:border-emerald-500 transition shadow-2xs"
+                  >
+                    <span className="text-xs font-bold text-cyan-600">Paytm</span>
+                    <span className="text-[10px] text-slate-400 mt-0.5">Pay via Paytm</span>
+                  </a>
                 </div>
               </div>
             )}
@@ -334,14 +364,14 @@ export default function HostedCheckoutPage({
             {activeTab === "vpa" && (
               <div className="mt-5 space-y-3">
                 <div>
-                  <label className="text-xs font-semibold text-slate-700">Enter UPI ID / VPA</label>
-                  <div className="mt-1 flex rounded-xl border border-slate-200 overflow-hidden focus-within:border-blue-500 focus-within:ring-1 focus-within:ring-blue-500">
+                  <label className="text-xs font-semibold text-slate-700">Enter your UPI ID</label>
+                  <div className="mt-1 flex rounded-2xl border border-slate-200 overflow-hidden focus-within:border-emerald-500 focus-within:ring-2 focus-within:ring-emerald-500/20">
                     <input
                       type="text"
-                      placeholder="mobile@upi or name@okaxis"
+                      placeholder="e.g. mobile@upi or name@okaxis"
                       value={vpaInput}
                       onChange={(e) => setVpaInput(e.target.value)}
-                      className="w-full px-3 py-2.5 text-sm text-slate-900 outline-none"
+                      className="w-full px-3.5 py-2.5 text-xs text-slate-900 outline-none"
                     />
                   </div>
                   <p className="mt-1 text-[11px] text-slate-400">A payment collect request will be sent to your UPI app.</p>
@@ -350,43 +380,43 @@ export default function HostedCheckoutPage({
                 <button
                   onClick={() => handleSimulateStatus("SUCCESS")}
                   disabled={processing}
-                  className="w-full rounded-xl bg-blue-600 py-2.5 text-sm font-semibold text-white hover:bg-blue-700 transition"
+                  className="w-full rounded-2xl bg-emerald-600 py-3 text-xs font-bold text-white hover:bg-emerald-500 transition shadow-md"
                 >
-                  Verify & Pay ₹{payment.amount.toFixed(2)}
+                  Request & Pay ₹{payment.amount.toFixed(2)}
                 </button>
               </div>
             )}
 
-            {/* MVP Test Simulator Controls */}
-            <div className="mt-6 rounded-xl border border-dashed border-amber-300 bg-amber-50/60 p-3.5">
+            {/* Instant Test Payment Box */}
+            <div className="mt-6 rounded-2xl border border-slate-200 bg-slate-50/80 p-4">
               <div className="flex items-center justify-between mb-2">
-                <span className="text-xs font-bold text-amber-900 uppercase tracking-wider flex items-center gap-1.5">
-                  <span className="h-2 w-2 rounded-full bg-amber-500 animate-ping" />
-                  Mock UPI Simulator
+                <span className="text-[11px] font-bold text-slate-700 uppercase tracking-wider flex items-center gap-1.5">
+                  <Zap className="h-3.5 w-3.5 text-emerald-500" />
+                  Instant Sandbox Simulation
                 </span>
-                <span className="text-[10px] bg-amber-200 text-amber-900 font-semibold px-2 py-0.5 rounded">
+                <span className="text-[10px] bg-emerald-100 text-emerald-800 font-bold px-2 py-0.5 rounded-full">
                   Sandbox
                 </span>
               </div>
-              <p className="text-[11px] text-amber-800/80 mb-3">
-                Trigger mock bank responses to verify webhook dispatch and immutable ledger credit.
+              <p className="text-[11px] text-slate-500 mb-3">
+                Click below to instantly test a successful or failed payment callback.
               </p>
               <div className="grid grid-cols-2 gap-2">
                 <button
                   onClick={() => handleSimulateStatus("SUCCESS")}
                   disabled={processing}
-                  className="flex items-center justify-center gap-1.5 rounded-lg bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-700 transition disabled:opacity-50"
+                  className="flex items-center justify-center gap-1.5 rounded-xl bg-emerald-600 px-3 py-2 text-xs font-bold text-white hover:bg-emerald-500 transition disabled:opacity-50 shadow-xs"
                 >
                   <CheckCircle2 className="h-3.5 w-3.5" />
-                  Simulate Success
+                  Test Success
                 </button>
                 <button
                   onClick={() => handleSimulateStatus("FAILED")}
                   disabled={processing}
-                  className="flex items-center justify-center gap-1.5 rounded-lg bg-rose-600 px-3 py-2 text-xs font-bold text-white hover:bg-rose-700 transition disabled:opacity-50"
+                  className="flex items-center justify-center gap-1.5 rounded-xl bg-rose-600 px-3 py-2 text-xs font-bold text-white hover:bg-rose-500 transition disabled:opacity-50 shadow-xs"
                 >
                   <XCircle className="h-3.5 w-3.5" />
-                  Simulate Failure
+                  Test Failure
                 </button>
               </div>
             </div>
@@ -394,11 +424,11 @@ export default function HostedCheckoutPage({
         )}
 
         {/* Footer */}
-        <div className="border-t border-slate-100 bg-slate-50 px-5 py-3 text-center">
+        <div className="border-t border-slate-100 bg-slate-50/60 px-5 py-3.5 text-center">
           <div className="flex items-center justify-center gap-1.5 text-[11px] font-medium text-slate-500">
             <Lock className="h-3 w-3 text-emerald-600" />
-            <span>Encrypted NPCI UPI Standard • Powered by </span>
-            <span className="font-bold text-slate-800">BharatUPI</span>
+            <span>100% Secure UPI Payments • Powered by </span>
+            <span className="font-bold text-slate-900">BharatUPI</span>
           </div>
         </div>
       </div>

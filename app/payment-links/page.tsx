@@ -124,7 +124,7 @@ export default function PaymentLinksPage() {
 
             <button
               onClick={() => setShowModal(true)}
-              className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 transition"
+              className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:from-emerald-700 hover:to-teal-700 transition"
             >
               <Plus className="h-4 w-4" />
               <span>Create New Link</span>
@@ -132,7 +132,7 @@ export default function PaymentLinksPage() {
           </div>
 
           {/* Table */}
-          <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-xs">
+          <div className="rounded-2xl border border-slate-200/80 bg-white overflow-hidden shadow-xs">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead className="bg-slate-50/70 border-b border-slate-100 text-slate-500 uppercase tracking-wider font-semibold">
@@ -160,7 +160,7 @@ export default function PaymentLinksPage() {
                         <tr key={link.id} className="hover:bg-slate-50/60 transition">
                           <td className="py-3.5 px-5">
                             <div className="font-semibold text-slate-900">{link.title}</div>
-                            <div className="font-mono text-[11px] text-blue-600 truncate max-w-[200px]">
+                            <div className="font-mono text-[11px] text-emerald-600 truncate max-w-[200px]">
                               /l/{link.slug}
                             </div>
                           </td>
@@ -207,7 +207,7 @@ export default function PaymentLinksPage() {
                               href={`/l/${link.slug}`}
                               target="_blank"
                               rel="noopener noreferrer"
-                              className="text-blue-600 hover:text-blue-800 font-semibold"
+                              className="text-emerald-600 hover:text-emerald-800 font-semibold"
                             >
                               View ↗
                             </a>
@@ -247,7 +247,7 @@ export default function PaymentLinksPage() {
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       placeholder="e.g. Summer Drop Hoodie"
-                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-600"
+                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-emerald-500"
                     />
                   </div>
 
@@ -261,7 +261,7 @@ export default function PaymentLinksPage() {
                       value={amount}
                       onChange={(e) => setAmount(e.target.value)}
                       placeholder="e.g. 1499"
-                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-600"
+                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-emerald-500"
                     />
                   </div>
 
@@ -272,7 +272,7 @@ export default function PaymentLinksPage() {
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       placeholder="Brief notes about the product or service"
-                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-600"
+                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-emerald-500"
                     />
                   </div>
 
@@ -284,7 +284,7 @@ export default function PaymentLinksPage() {
                           type="checkbox"
                           checked={customerNameRequired}
                           onChange={(e) => setCustomerNameRequired(e.target.checked)}
-                          className="rounded text-blue-600"
+                          className="rounded text-emerald-600 focus:ring-emerald-500"
                         />
                         <span>Customer Name</span>
                       </label>
@@ -293,7 +293,7 @@ export default function PaymentLinksPage() {
                           type="checkbox"
                           checked={customerPhoneRequired}
                           onChange={(e) => setCustomerPhoneRequired(e.target.checked)}
-                          className="rounded text-blue-600"
+                          className="rounded text-emerald-600 focus:ring-emerald-500"
                         />
                         <span>Customer Mobile Phone</span>
                       </label>
@@ -302,7 +302,7 @@ export default function PaymentLinksPage() {
                           type="checkbox"
                           checked={customerEmailRequired}
                           onChange={(e) => setCustomerEmailRequired(e.target.checked)}
-                          className="rounded text-blue-600"
+                          className="rounded text-emerald-600 focus:ring-emerald-500"
                         />
                         <span>Customer Email</span>
                       </label>
@@ -320,7 +320,7 @@ export default function PaymentLinksPage() {
                     <button
                       type="submit"
                       disabled={creating}
-                      className="flex-1 rounded-xl bg-blue-600 py-2.5 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+                      className="flex-1 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 py-2.5 text-xs font-semibold text-white hover:from-emerald-700 hover:to-teal-700 disabled:opacity-50 shadow-sm"
                     >
                       {creating ? "Generating..." : "Create Link"}
                     </button>

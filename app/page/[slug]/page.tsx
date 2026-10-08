@@ -2,7 +2,7 @@
 
 import { useEffect, useState, use } from "react";
 import Link from "next/link";
-import { AlertCircle, ArrowLeft, Loader2 } from "lucide-react";
+import { AlertCircle, ArrowLeft, Loader2, CheckCircle2 } from "lucide-react";
 import PaymentPageForm from "./PaymentPageForm";
 
 interface PageData {
@@ -53,10 +53,10 @@ export default function PaymentPagePublic({
 
   if (loading) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-100 p-4">
-        <div className="w-full max-w-lg rounded-2xl border border-slate-200/80 bg-white p-12 text-center shadow-xl">
-          <Loader2 className="mx-auto h-8 w-8 animate-spin text-blue-600" />
-          <p className="mt-4 text-xs font-medium text-slate-500">Loading payment page...</p>
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4 font-sans">
+        <div className="w-full max-w-lg rounded-3xl border border-slate-200/80 bg-white p-12 text-center shadow-xl">
+          <Loader2 className="mx-auto h-8 w-8 animate-spin text-emerald-600" />
+          <p className="mt-4 text-xs font-semibold text-slate-500">Loading checkout page...</p>
         </div>
       </div>
     );
@@ -64,8 +64,8 @@ export default function PaymentPagePublic({
 
   if (error || !page) {
     return (
-      <div className="flex min-h-screen items-center justify-center bg-slate-100 p-4">
-        <div className="w-full max-w-md rounded-2xl border border-slate-200/80 bg-white p-8 text-center shadow-xl">
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4 font-sans">
+        <div className="w-full max-w-md rounded-3xl border border-slate-200/80 bg-white p-8 text-center shadow-xl">
           <div className="mx-auto mb-4 flex h-14 w-14 items-center justify-center rounded-2xl bg-rose-50 text-rose-600">
             <AlertCircle className="h-7 w-7" />
           </div>
@@ -78,11 +78,11 @@ export default function PaymentPagePublic({
           )}
           <div className="mt-6">
             <Link
-              href="/dashboard"
-              className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:bg-slate-800 transition"
+              href="/"
+              className="inline-flex items-center gap-2 rounded-xl bg-slate-900 px-5 py-2.5 text-xs font-bold text-white shadow-sm hover:bg-slate-800 transition"
             >
               <ArrowLeft className="h-4 w-4" />
-              <span>Return to Dashboard</span>
+              <span>Return to Home</span>
             </Link>
           </div>
         </div>
@@ -91,30 +91,33 @@ export default function PaymentPagePublic({
   }
 
   return (
-    <div className="flex min-h-screen items-center justify-center bg-slate-100 p-4">
-      <div className="w-full max-w-lg rounded-2xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-xl">
-        <div className="flex items-center gap-3 border-b border-slate-100 pb-5 mb-5">
+    <div className="flex min-h-screen items-center justify-center bg-slate-100/90 p-4 font-sans">
+      <div className="w-full max-w-lg rounded-3xl border border-slate-200/80 bg-white p-6 sm:p-8 shadow-2xl">
+        <div className="flex items-center gap-3.5 border-b border-slate-100 pb-5 mb-5">
           {page.logoUrl ? (
             <img
               src={page.logoUrl}
               alt="Brand logo"
-              className="h-12 w-12 rounded-xl object-contain border border-slate-100 p-1"
+              className="h-12 w-12 rounded-2xl object-contain border border-slate-100 p-1"
             />
           ) : (
-            <div className="flex h-12 w-12 items-center justify-center rounded-xl bg-blue-600 font-bold text-lg text-white shadow-sm">
+            <div className="flex h-12 w-12 items-center justify-center rounded-2xl bg-gradient-to-tr from-emerald-500 to-teal-400 font-black text-slate-950 shadow-md shadow-emerald-500/20">
               {(page.brandName || page.merchant.businessName).slice(0, 2).toUpperCase()}
             </div>
           )}
           <div>
-            <h1 className="text-xl font-bold text-slate-900">{page.title}</h1>
-            <p className="text-xs text-slate-500">
+            <div className="flex items-center gap-1.5">
+              <h1 className="text-lg font-bold text-slate-900 leading-tight">{page.title}</h1>
+              <CheckCircle2 className="h-4 w-4 text-emerald-500" />
+            </div>
+            <p className="text-xs text-slate-500 mt-0.5">
               Verified Merchant: {page.brandName || page.merchant.businessName}
             </p>
           </div>
         </div>
 
         {page.description && (
-          <p className="mb-6 rounded-xl bg-slate-50 p-4 text-xs text-slate-600 leading-relaxed border border-slate-100">
+          <p className="mb-6 rounded-2xl bg-slate-50 p-4 text-xs text-slate-600 leading-relaxed border border-slate-100">
             {page.description}
           </p>
         )}

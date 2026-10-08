@@ -102,7 +102,7 @@ export default function PaymentPagesPage() {
 
             <button
               onClick={() => setShowModal(true)}
-              className="flex items-center gap-1.5 rounded-xl bg-blue-600 px-4 py-2 text-xs font-semibold text-white shadow-xs hover:bg-blue-700 transition"
+              className="flex items-center gap-1.5 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 px-4 py-2.5 text-xs font-semibold text-white shadow-sm hover:from-emerald-700 hover:to-teal-700 transition"
             >
               <Plus className="h-4 w-4" />
               <span>Create Payment Page</span>
@@ -110,7 +110,7 @@ export default function PaymentPagesPage() {
           </div>
 
           {/* Table */}
-          <div className="rounded-2xl border border-slate-200 bg-white overflow-hidden shadow-xs">
+          <div className="rounded-2xl border border-slate-200/80 bg-white overflow-hidden shadow-xs">
             <div className="overflow-x-auto">
               <table className="w-full text-left text-xs">
                 <thead className="bg-slate-50/70 border-b border-slate-100 text-slate-500 uppercase tracking-wider font-semibold">
@@ -135,7 +135,7 @@ export default function PaymentPagesPage() {
                       <tr key={page.id} className="hover:bg-slate-50/60 transition">
                         <td className="py-3.5 px-5">
                           <div className="font-semibold text-slate-900">{page.title}</div>
-                          <div className="font-mono text-[11px] text-blue-600">
+                          <div className="font-mono text-[11px] text-emerald-600">
                             /page/{page.slug}
                           </div>
                         </td>
@@ -170,7 +170,7 @@ export default function PaymentPagesPage() {
                             href={`/page/${page.slug}`}
                             target="_blank"
                             rel="noopener noreferrer"
-                            className="text-blue-600 hover:text-blue-800 font-semibold"
+                            className="text-emerald-600 hover:text-emerald-800 font-semibold"
                           >
                             Open Page ↗
                           </a>
@@ -203,7 +203,7 @@ export default function PaymentPagesPage() {
                       value={title}
                       onChange={(e) => setTitle(e.target.value)}
                       placeholder="e.g. Annual Club Pass"
-                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-600"
+                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-emerald-500"
                     />
                   </div>
 
@@ -214,7 +214,7 @@ export default function PaymentPagesPage() {
                       value={brandName}
                       onChange={(e) => setBrandName(e.target.value)}
                       placeholder="e.g. Swag Retail"
-                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-600"
+                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-emerald-500"
                     />
                   </div>
 
@@ -225,7 +225,7 @@ export default function PaymentPagesPage() {
                       value={description}
                       onChange={(e) => setDescription(e.target.value)}
                       placeholder="Provide details of the service, event, or product"
-                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-600"
+                      className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-emerald-500"
                     />
                   </div>
 
@@ -237,7 +237,7 @@ export default function PaymentPagesPage() {
                         onClick={() => setAmountMode("FIXED")}
                         className={`flex-1 rounded-xl py-2 text-xs font-semibold border transition ${
                           amountMode === "FIXED"
-                            ? "bg-blue-50 border-blue-600 text-blue-700"
+                            ? "bg-emerald-50 border-emerald-600 text-emerald-800"
                             : "border-slate-200 text-slate-600 hover:bg-slate-50"
                         }`}
                       >
@@ -248,7 +248,7 @@ export default function PaymentPagesPage() {
                         onClick={() => setAmountMode("CUSTOMER_DECIDES")}
                         className={`flex-1 rounded-xl py-2 text-xs font-semibold border transition ${
                           amountMode === "CUSTOMER_DECIDES"
-                            ? "bg-blue-50 border-blue-600 text-blue-700"
+                            ? "bg-emerald-50 border-emerald-600 text-emerald-800"
                             : "border-slate-200 text-slate-600 hover:bg-slate-50"
                         }`}
                       >
@@ -268,7 +268,7 @@ export default function PaymentPagesPage() {
                         value={fixedAmount}
                         onChange={(e) => setFixedAmount(e.target.value)}
                         placeholder="e.g. 2499"
-                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-blue-600"
+                        className="mt-1 w-full rounded-xl border border-slate-200 px-3 py-2 text-xs text-slate-900 outline-none focus:border-emerald-500"
                       />
                     </div>
                   )}
@@ -284,7 +284,7 @@ export default function PaymentPagesPage() {
                     <button
                       type="submit"
                       disabled={creating}
-                      className="flex-1 rounded-xl bg-blue-600 py-2.5 text-xs font-semibold text-white hover:bg-blue-700 disabled:opacity-50"
+                      className="flex-1 rounded-xl bg-gradient-to-r from-emerald-600 to-teal-600 py-2.5 text-xs font-semibold text-white hover:from-emerald-700 hover:to-teal-700 disabled:opacity-50 shadow-sm"
                     >
                       {creating ? "Publishing..." : "Publish Page"}
                     </button>
