@@ -1,6 +1,6 @@
 # BharatUPI Payment Gateway MVP
 
-A production-foundation **UPI-only payment gateway** built for approved Indian merchants, inspired by Razorpay and NPCI specifications.
+A production-ready **UPI-only payment gateway** built for approved Indian merchants, inspired by Razorpay and NPCI specifications.
 
 ---
 
@@ -53,33 +53,57 @@ HMAC-SHA256 Webhook Dispatcher ──► Merchant Server
 
 ---
 
-## 🚀 Quick Start
+## ⚡ Using Supabase for Database
 
-### 1. Database & Prerequisites
-* Node.js 18+
-* PostgreSQL running locally on port 5432 (`upi_gateway` database)
+This project supports **Supabase PostgreSQL** out of the box with connection pooling.
 
-### 2. Environment Variables (`.env`)
+### 1. Retrieve Supabase Connection Strings
+In your Supabase project dashboard:
+1. Navigate to **Project Settings** ➔ **Database**.
+2. Under **Connection string**:
+   * Select **URI** and **Transaction Mode** (Port `6543`) for `DATABASE_URL`.
+   * Select **Session Mode** or **Direct** (Port `5432`) for `DIRECT_URL`.
+
+### 2. Configure `.env`
 ```env
-DATABASE_URL="postgresql://postgres:PASSWORD@localhost:5432/upi_gateway?schema=public"
-JWT_SECRET="bharatpay-upi-gateway-jwt-secret-2026-very-secure-key"
-NEXT_PUBLIC_BASE_URL="http://localhost:3000"
+# Supabase Transaction Pooler (for Next.js / Serverless)
+DATABASE_URL="postgresql://postgres.[YOUR-PROJECT-REF]:[YOUR-PASSWORD]@aws-0-[REGION].pooler.supabase.com:6543/postgres?pgbouncer=true"
+
+# Supabase Direct Connection (for Prisma migrations / db push)
+DIRECT_URL="postgresql://postgres.[YOUR-PROJECT-REF]:[YOUR-PASSWORD]@aws-0-[REGION].pooler.supabase.com:5432/postgres"
+
+# Production secrets
+JWT_SECRET="generate-a-secure-random-secret"
+NEXT_PUBLIC_BASE_URL="https://your-production-app.com"
 NEXT_PUBLIC_APP_NAME="BharatUPI Gateway"
-NODE_ENV="development"
+NODE_ENV="production"
 ```
 
-### 3. Setup & Seed
+### 3. Migrate & Seed Supabase Database
+Run the following commands in your terminal:
 ```bash
-# Push Prisma models to database
-npx prisma db push
+# Push schema into your Supabase database
+npm run db:push
 
-# Seed default admin, approved merchant, and sample data
-npx tsx prisma/seed.ts
-
-# Start production server
-npm run build
-npm start
+# Seed admin and sample merchants
+npm run db:seed
 ```
+
+---
+
+## 🚀 Deployment to Vercel / Production
+
+1. Push your repository to GitHub.
+2. In **Vercel** (or Railway/Render):
+   * Connect your GitHub repository.
+   * Add Environment Variables:
+     * `DATABASE_URL` (Supabase Transaction Pooler)
+     * `DIRECT_URL` (Supabase Direct URL)
+     * `JWT_SECRET`
+     * `NEXT_PUBLIC_BASE_URL` (Your production domain, e.g. `https://bharatupi.vercel.app`)
+     * `NEXT_PUBLIC_APP_NAME`
+     * `NODE_ENV=production`
+3. Deploy! Next.js will automatically run `prisma generate && next build`.
 
 ---
 
