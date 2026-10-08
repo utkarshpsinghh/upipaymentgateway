@@ -1,40 +1,68 @@
-import { prisma } from "@/lib/db/prisma";
+"use client";
+
+import { useEffect, useState, use } from "react";
 import Link from "next/link";
-import { AlertCircle, ArrowLeft } from "lucide-react";
+import { AlertCircle, ArrowLeft, Loader2 } from "lucide-react";
 import PaymentPageForm from "./PaymentPageForm";
 
-export default async function PaymentPagePublic({
+interface PageData {
+  id: string;
+  slug: string;
+  title: string;
+  description?: string;
+  brandName?: string;
+  logoUrl?: string;
+  amountMode: "FIXED" | "CUSTOMER_DECIDES";
+  fixedAmount: number | null;
+  status: string;
+  merchant: {
+    businessName: string;
+    email: string;
+  };
+}
+
+export default function PaymentPagePublic({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params;
-  const decodedSlug = decodeURIComponent(slug);
+  const { slug } = use(params);
+  const [page, setPage] = useState<PageData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  let page = null;
-  try {
-    page = await prisma.paymentPage.findFirst({
-      where: {
-        OR: [
-          { slug: decodedSlug },
-          { slug: slug },
-          { slug: { equals: decodedSlug, mode: "insensitive" } },
-        ],
-      },
-      include: {
-        merchant: {
-          select: {
-            businessName: true,
-            email: true,
-          },
-        },
-      },
-    });
-  } catch (err) {
-    console.error("Error fetching payment page:", err);
+  useEffect(() => {
+    async function loadPage() {
+      try {
+        setLoading(true);
+        setError(null);
+        const res = await fetch(`/api/pay/page/${slug}`);
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || "Payment page not found");
+        }
+        setPage(data.page);
+      } catch (err: any) {
+        setError(err.message || "Failed to load payment page");
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadPage();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-100 p-4">
+        <div className="w-full max-w-lg rounded-2xl border border-slate-200/80 bg-white p-12 text-center shadow-xl">
+          <Loader2 className="mx-auto h-8 w-8 animate-spin text-blue-600" />
+          <p className="mt-4 text-xs font-medium text-slate-500">Loading payment page...</p>
+        </div>
+      </div>
+    );
   }
 
-  if (!page) {
+  if (error || !page) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-100 p-4">
         <div className="w-full max-w-md rounded-2xl border border-slate-200/80 bg-white p-8 text-center shadow-xl">
@@ -43,8 +71,11 @@ export default async function PaymentPagePublic({
           </div>
           <h1 className="text-xl font-bold text-slate-900">Payment Page Not Found</h1>
           <p className="mt-2 text-xs text-slate-500 leading-relaxed">
-            The hosted page with identifier <code className="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-800">{decodedSlug}</code> does not exist or may have been deleted by the merchant.
+            The hosted page with identifier <code className="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-800">{slug}</code> does not exist or may have been deleted.
           </p>
+          {error && error !== "Payment page not found" && (
+            <p className="mt-2 text-[11px] text-rose-600 bg-rose-50 p-2 rounded-lg">{error}</p>
+          )}
           <div className="mt-6">
             <Link
               href="/dashboard"

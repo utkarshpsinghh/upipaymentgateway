@@ -1,40 +1,72 @@
-import { prisma } from "@/lib/db/prisma";
+"use client";
+
+import { useEffect, useState, use } from "react";
 import Link from "next/link";
-import { AlertCircle, ArrowLeft } from "lucide-react";
+import { AlertCircle, ArrowLeft, Loader2 } from "lucide-react";
 import PaymentLinkForm from "./PaymentLinkForm";
 
-export default async function PaymentLinkPublicPage({
+interface LinkData {
+  id: string;
+  slug: string;
+  title: string;
+  description?: string;
+  amount: number;
+  currency: string;
+  status: string;
+  isExpired: boolean;
+  isLimitReached: boolean;
+  isInactive: boolean;
+  customerNameRequired: boolean;
+  customerPhoneRequired: boolean;
+  customerEmailRequired: boolean;
+  merchant: {
+    businessName: string;
+    email: string;
+  };
+}
+
+export default function PaymentLinkPublicPage({
   params,
 }: {
   params: Promise<{ slug: string }>;
 }) {
-  const { slug } = await params;
-  const decodedSlug = decodeURIComponent(slug);
+  const { slug } = use(params);
+  const [link, setLink] = useState<LinkData | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  let link = null;
-  try {
-    link = await prisma.paymentLink.findFirst({
-      where: {
-        OR: [
-          { slug: decodedSlug },
-          { slug: slug },
-          { slug: { equals: decodedSlug, mode: "insensitive" } },
-        ],
-      },
-      include: {
-        merchant: {
-          select: {
-            businessName: true,
-            email: true,
-          },
-        },
-      },
-    });
-  } catch (err) {
-    console.error("Error fetching payment link:", err);
+  useEffect(() => {
+    async function loadLink() {
+      try {
+        setLoading(true);
+        setError(null);
+        const res = await fetch(`/api/pay/link/${slug}`);
+        const data = await res.json();
+        if (!res.ok) {
+          throw new Error(data.error || "Payment link not found");
+        }
+        setLink(data.link);
+      } catch (err: any) {
+        setError(err.message || "Failed to load payment link");
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadLink();
+  }, [slug]);
+
+  if (loading) {
+    return (
+      <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
+        <div className="w-full max-w-md rounded-2xl border border-slate-200/80 bg-white p-12 text-center shadow-xl">
+          <Loader2 className="mx-auto h-8 w-8 animate-spin text-blue-600" />
+          <p className="mt-4 text-xs font-medium text-slate-500">Loading payment link...</p>
+        </div>
+      </div>
+    );
   }
 
-  if (!link) {
+  if (error || !link) {
     return (
       <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
         <div className="w-full max-w-md rounded-2xl border border-slate-200/80 bg-white p-8 text-center shadow-xl">
@@ -43,8 +75,11 @@ export default async function PaymentLinkPublicPage({
           </div>
           <h1 className="text-xl font-bold text-slate-900">Payment Link Not Found</h1>
           <p className="mt-2 text-xs text-slate-500 leading-relaxed">
-            The link with identifier <code className="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-800">{decodedSlug}</code> does not exist or may have been deleted by the merchant.
+            The link with identifier <code className="font-mono bg-slate-100 px-1.5 py-0.5 rounded text-slate-800">{slug}</code> does not exist or may have been deleted.
           </p>
+          {error && error !== "Payment link not found" && (
+            <p className="mt-2 text-[11px] text-rose-600 bg-rose-50 p-2 rounded-lg">{error}</p>
+          )}
           <div className="mt-6">
             <Link
               href="/dashboard"
@@ -58,10 +93,6 @@ export default async function PaymentLinkPublicPage({
       </div>
     );
   }
-
-  const isExpired = link.expiresAt && new Date() > link.expiresAt;
-  const isLimitReached = link.maxPayments && link.paymentCount >= link.maxPayments;
-  const isInactive = link.status !== "ACTIVE" || isExpired || isLimitReached;
 
   return (
     <div className="flex min-h-screen items-center justify-center bg-slate-50 p-4">
@@ -92,7 +123,7 @@ export default async function PaymentLinkPublicPage({
           </div>
         </div>
 
-        {isInactive ? (
+        {link.isInactive ? (
           <div className="rounded-xl bg-amber-50 p-4 text-center text-xs font-medium text-amber-800 border border-amber-200">
             This payment link is currently unavailable or expired.
           </div>
