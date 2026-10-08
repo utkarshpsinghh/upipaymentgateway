@@ -1,98 +1,106 @@
-# 🏰 HOT — Kingshot Alliance CRM (Command Center)
+# BharatUPI Payment Gateway MVP
 
-[![React](https://img.shields.io/badge/Frontend-React%2019%20%2B%20TypeScript-61dafb.svg)](https://react.dev/)
-[![Vite](https://img.shields.io/badge/Build-Vite%208-646cff.svg)](https://vite.dev/)
-[![Tailwind CSS](https://img.shields.io/badge/Styles-Tailwind%20CSS%20v4-38bdf8.svg)](https://tailwindcss.com/)
-[![Database](https://img.shields.io/badge/Database-Google%20Sheets-34a853.svg)](https://sheets.google.com/)
-
-A web-based **Alliance Management CRM for the Kingshot alliance "HOT"** designed like a **Kingshot fantasy alliance war room**, not a sterile corporate spreadsheet.
+A production-foundation **UPI-only payment gateway** built for approved Indian merchants, inspired by Razorpay and NPCI specifications.
 
 ---
 
-## ⚔️ Key Features & Product Highlights
+## 🌟 Key Features
 
-### 1. 🏰 Alliance Command Center (Dashboard)
-- **Alliance Telemetry**: Live cards for Total Members (92), Active Combatants, Inactive Absentees, Infraction Strikes, and Needs Attention watchlist.
-- **Event Overview Telemetry**: Real-time visual progress bars and attendance percentage gauges for **BT1, BT2, Swordland L1, Swordland L2, Tri Alliance L1, and Tri Alliance L2**.
-- **Actionable War Alerts**: Interactive alerts (e.g. *"X members haven't voted recently"*, *"Y members have 2+ strikes"*, *"Z members silent for 7+ days"*) that immediately open filtered roster views.
-- **Chronological Event Log**: Quick click into any event's attendance ledger.
+### For Merchants
+* **Merchant Onboarding Flow**: Complete compliance dossier (PAN, GSTIN, Bank Account, IFSC, Entity Classification). Status lifecycle: `PENDING` ➔ `UNDER_REVIEW` ➔ `APPROVED` / `REJECTED` / `SUSPENDED`.
+* **Razorpay-Inspired Merchant Dashboard**: Real-time metrics (Today's Volume, Total Collected, Available Ledger Balance, Pending Settlements, Success Rates, 7-day volume charts).
+* **Payment Links (`/l/:slug`)**: Custom branded payment links with customer requirement checks and automated expiration.
+* **Hosted Payment Pages (`/page/:slug`)**: Multi-purpose hosted pages supporting fixed pricing and customer-determined amounts (e.g., donations, club passes).
+* **Payment Buttons & Embed SDK (`/sdk.js`)**: Drop-in JavaScript SDK that embeds a responsive modal checkout into any webpage without exposing secret API keys.
+* **Unified UPI Checkout (`/pay/:paymentId`)**: Standard NPCI UPI URI schemes, dynamic QR code generation, UPI App Intent buttons (GPay, PhonePe, Paytm, BHIM), and VPA Collect requests.
+* **Webhook System**: Automated event notifications (`payment.created`, `payment.success`, `payment.failed`, `settlement.completed`) signed with **HMAC-SHA256** and delivery retry logging.
+* **Developer Console**: API key generation (`sk_test_`, `pk_test_`), webhook configuration, live payment simulator, and REST API documentation.
 
-### 2. 👥 Alliance Roster (Members)
-- **Heraldic Rank Badges**: Custom rank insignia for **R5 (Leader)**, **R4 (Officers)**, **R3 (Elites)**, **R2 (Warriors)**, and **R1 (Recruits)**.
-- **Member Dossier**: Complete historical profile tracking former ranks, disciplinary strikes, communication status, notes, and full event participation logs (✓ Joined, ✗ Flaked, — No Vote).
-- **Search & Multi-Filter**: Filter by rank, communication (Good / Warning / Poor / Unknown), strikes, and active/inactive status.
-- **Soft-Delete / Archiving**: Preserves all historical battle data when members depart or are demoted.
-
-### 3. ⚔️ War Events
-- **Supported Event Types**: Default support for **BT1, BT2, Swordland L1, Swordland L2, Tri Alliance L1, Tri Alliance L2**, and custom event types.
-- **Automatic Roster Provisioning**: Summoning a new war event automatically enrolls all active alliance members into the attendance ledger with zero manual typing.
-
-### 4. 📊 Attendance Command
-- **4 Distinct Combatant Categories**:
-  1. 🟢 **Joined**: Voted and participated in the battle.
-  2. 🟡 **Voted but Didn't Join**: Flaked after voting YES (includes 1-click **⚠️ Strike** action).
-  3. 🔴 **Didn't Vote**: Never submitted a vote response.
-  4. ⚪ **Absent / Not Applicable**: Voted NO or excused.
-- **Fast Attendance Controls**: Single-click toggle buttons `[YES] [NO] [NO VOTE]` and `[JOINED] [DIDN'T JOIN]`.
-- **Bulk Actions**: 1-click operations (*"Mark All YES as JOINED"*, *"Mark All as NO VOTE"*, *"Mark Everyone JOINED"*) with stylized confirmation modals.
-
-### 5. ⚠️ Inactivity & Warning Radar
-- **Automated Calculation**: Evaluates the latest timestamp across votes, attendance, and alliance records.
-- **Tiered Risk Classification**:
-  - ⚠️ **Warning Watchlist**: 3–6 days silent.
-  - 🔴 **Inactive**: 7–13 days silent.
-  - 💀 **Critical**: 14+ days silent.
-- Configurable thresholds directly in Settings.
-
-### 6. 🛡️ Disciplinary Strike System
-- Permanent historical strike logs with dates, reasons, and issuer attribution.
-- Pardon strike capability without destroying historical audit logs.
-
-### 7. 🔊 Kingshot Game Audio Experience
-- Integrated Web Audio API synthesizer generating medieval fanfares, sword clashes, and battle horn alert chimes without external audio dependencies.
+### For Platform Administrators
+* **Merchant KYC Underwriting**: Review business profiles, verify PAN and bank IFSC details, approve, reject, or suspend merchants.
+* **Double-Entry Immutable Ledger**: Dynamic balance calculation from immutable `CREDIT` and `DEBIT` entries. Zero manually editable balance fields.
+* **Escrow Settlement Desk**: Batch payout reviews, balance validation checks (ensuring payout ≤ available balance), recording bank UTR reference numbers, and automated ledger debiting.
+* **Security Audit Trail**: Tamper-evident logging of every sensitive administrative action (`ADMIN_APPROVED_MERCHANT`, `ADMIN_CREATED_SETTLEMENT`, `ADMIN_COMPLETED_SETTLEMENT`).
 
 ---
 
-## ⚡ Quickstart
+## 🏗️ Architecture & Compliance Boundaries
 
-### 1. Install & Run Locally
-```bash
-npm install
-npm run dev
 ```
-Open [http://localhost:5173](http://localhost:5173) in your browser.
+Client App / Storefront
+        │  (POST /api/v1/payments with sk_test_...)
+        ▼
+REST API Layer (Zod Validation & Bearer Auth)
+        │
+Payment Service (Idempotency & Approval Checks)
+        │
+PaymentProvider Abstraction
+        ├── MockUPIProvider (TEST MODE Simulator)
+        └── [Bank/PSP Authorised UPI Adapter] (LIVE MODE)
+        │
+Double-Entry Immutable Ledger
+        ├── PAYMENT (CREDIT)
+        ├── FEE (DEBIT)
+        ├── REFUND (DEBIT)
+        └── SETTLEMENT (DEBIT)
+        │
+HMAC-SHA256 Webhook Dispatcher ──► Merchant Server
+```
 
-### 2. Build for Production
+* **No Card/CVV Storage**: System is strictly UPI-native.
+* **Abstracted Escrow Layer**: Merchant settlement bank accounts are held behind a regulated payment account abstraction layer in accordance with RBI guidelines.
+* **Strict Test Separation**: The Mock provider is explicitly prohibited from generating simulated success in `LIVE` mode.
+
+---
+
+## 🚀 Quick Start
+
+### 1. Database & Prerequisites
+* Node.js 18+
+* PostgreSQL running locally on port 5432 (`upi_gateway` database)
+
+### 2. Environment Variables (`.env`)
+```env
+DATABASE_URL="postgresql://postgres:PASSWORD@localhost:5432/upi_gateway?schema=public"
+JWT_SECRET="bharatpay-upi-gateway-jwt-secret-2026-very-secure-key"
+NEXT_PUBLIC_BASE_URL="http://localhost:3000"
+NEXT_PUBLIC_APP_NAME="BharatUPI Gateway"
+NODE_ENV="development"
+```
+
+### 3. Setup & Seed
 ```bash
+# Push Prisma models to database
+npx prisma db push
+
+# Seed default admin, approved merchant, and sample data
+npx tsx prisma/seed.ts
+
+# Start production server
 npm run build
-npm run preview
+npm start
 ```
 
 ---
 
-## 🔑 Officer Authentication Gate
+## 🔑 Pre-Seeded Demo Accounts
 
-Log in with default officer credentials:
-- **Username**: `admin` (or `hot_leader`)
-- **Password**: `kingshot_hot`
+| Role | Email | Password | Features Accessible |
+|---|---|---|---|
+| **Super Admin** | `admin@bharatupi.internal` | `AdminPassword@123` | Merchant approvals, settlements, UTR recording, ledger, audit logs |
+| **Approved Merchant** | `merchant@swagfashion.in` | `MerchantPassword@123` | Swag Fashion dashboard, links, pages, API keys, settlements |
+| **Pending Merchant** | `onboarding@techsol.in` | `MerchantPassword@123` | Pending applicant view (tests admin approval flow) |
 
-*(Credentials can be verified against your own Google Sheets `Admins` table via SHA-256).*
-
----
-
-## 📄 Google Sheets Database & Google Apps Script Setup
-
-This project uses **Google Sheets as the database** with **Google Apps Script** as the secure backend API.
-
-Follow the step-by-step instructions in [`google-apps-script/README.md`](file:///c:/Users/Utkarsh/Documents/CRM-HOT/google-apps-script/README.md):
-1. Create a blank Google Spreadsheet named **"HOT Alliance CRM Database"**.
-2. Click **Extensions > Apps Script** and paste the code from [`google-apps-script/Code.gs`](file:///c:/Users/Utkarsh/Documents/CRM-HOT/google-apps-script/Code.gs).
-3. Run `setupDatabase()` once to format all 7 sheets (`Members`, `Events`, `Attendance`, `Strike History`, `Communication`, `Admins`, `Settings`).
-4. Click **Deploy > New deployment > Web app** (Execute as: *Me*, Who has access: *Anyone*).
-5. Paste the generated Web App URL into the **⚙️ Settings** tab of the CRM.
+**Sample Test Secret API Key for Swag Fashion:**
+```text
+sk_test_swag_demo_7890abcdef123456
+```
 
 ---
 
-## 📱 Mobile Responsiveness
+## 🧪 Automated Verification Suite
 
-The application is fully responsive on smartphones and tablets, offering thumb-friendly touch targets, mobile card views, and quick filter controls.
+Run the end-to-end verification script testing all 22 criteria:
+```bash
+node scripts/verify-all.mjs
+```

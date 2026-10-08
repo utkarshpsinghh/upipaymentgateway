@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/admin/layout,_N_T_/admin/ledger/layout,_N_T_/admin/ledger/page,_N_T_/admin/ledger"
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/9a87a3bcde16389633c3fe41d551949ab256ae75e9a8e0fc8a925aa1c57b6dba/$/admin/ledger",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/admin/ledger/page"
+    },
+    "isFallback": false
+  }
+}

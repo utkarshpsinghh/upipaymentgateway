@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/settlements/layout,_N_T_/settlements/page,_N_T_/settlements"
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/2a3b0dc287a8c1cc95c283552fa9595d6ea756e7e4d5b441d09fc410c066d83f/$/settlements",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/settlements/page"
+    },
+    "isFallback": false
+  }
+}

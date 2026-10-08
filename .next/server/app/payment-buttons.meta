@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/payment-buttons/layout,_N_T_/payment-buttons/page,_N_T_/payment-buttons"
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/b0f590e299fa69d86c2ffdceab60318c72afa7ef1317a7d61b63f7489583374d/$/payment-buttons",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/payment-buttons/page"
+    },
+    "isFallback": false
+  }
+}

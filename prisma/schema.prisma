@@ -1,0 +1,351 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum MerchantStatus {
+  PENDING
+  UNDER_REVIEW
+  APPROVED
+  REJECTED
+  SUSPENDED
+}
+
+enum MerchantType {
+  INDIVIDUAL
+  PROPRIETORSHIP
+  PARTNERSHIP
+  PRIVATE_LIMITED
+  PUBLIC_LIMITED
+  LLP
+  TRUST_NGO
+}
+
+enum UserRole {
+  ADMIN
+  MERCHANT
+}
+
+enum Environment {
+  TEST
+  LIVE
+}
+
+enum PaymentStatus {
+  CREATED
+  PENDING
+  SUCCESS
+  FAILED
+  EXPIRED
+  REFUNDED
+  PARTIALLY_REFUNDED
+}
+
+enum SettlementStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+  ON_HOLD
+}
+
+enum LedgerType {
+  PAYMENT
+  FEE
+  REFUND
+  SETTLEMENT
+  ADJUSTMENT
+}
+
+enum LedgerDirection {
+  CREDIT
+  DEBIT
+}
+
+enum AmountMode {
+  FIXED
+  CUSTOMER_DECIDES
+}
+
+enum LinkStatus {
+  ACTIVE
+  INACTIVE
+  EXPIRED
+}
+
+model Merchant {
+  id                  String         @id @default(uuid())
+  businessName        String
+  legalName           String
+  email               String         @unique
+  phone               String
+  status              MerchantStatus @default(PENDING)
+  merchantType        MerchantType   @default(PROPRIETORSHIP)
+  ownerName           String
+  pan                 String
+  gstin               String?
+  address             String
+  website             String?
+  businessCategory    String?
+  description         String?
+  
+  // Settlement bank account info (held securely, abstracted layer)
+  bankAccountNumber   String
+  bankIfsc            String
+  settlementUpiId     String?
+
+  // Webhook settings
+  webhookUrl          String?
+  webhookSecret       String?
+  testWebhookUrl      String?
+  testWebhookSecret   String?
+
+  users               User[]
+  apiKeys             ApiKey[]
+  payments            Payment[]
+  paymentLinks        PaymentLink[]
+  paymentPages        PaymentPage[]
+  settlements         Settlement[]
+  ledgerEntries       LedgerEntry[]
+  webhookDeliveries   WebhookDelivery[]
+
+  createdAt           DateTime       @default(now())
+  updatedAt           DateTime       @updatedAt
+
+  @@index([status])
+  @@index([email])
+}
+
+model User {
+  id           String    @id @default(uuid())
+  merchantId   String?
+  merchant     Merchant? @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  email        String    @unique
+  passwordHash String
+  name         String?
+  role         UserRole  @default(MERCHANT)
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  @@index([merchantId])
+  @@index([email])
+}
+
+model ApiKey {
+  id          String      @id @default(uuid())
+  merchantId  String
+  merchant    Merchant    @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  keyPrefix   String      // e.g. "sk_test_", "sk_live_", "pk_test_", "pk_live_"
+  keyHash     String      // bcrypt or sha256 hash of full key
+  maskedKey   String      // e.g. "sk_test_...89ab"
+  name        String      @default("Default Key")
+  environment Environment @default(TEST)
+  lastUsedAt  DateTime?
+  revokedAt   DateTime?
+  createdAt   DateTime    @default(now())
+
+  @@index([merchantId])
+  @@index([keyPrefix])
+}
+
+model Payment {
+  id                String         @id // e.g. "pay_xxxxxxxxxxxx"
+  merchantId        String
+  merchant          Merchant       @relation(fields: [merchantId], references: [id], onDelete: Restrict)
+  merchantOrderId   String
+  amount            Decimal        @db.Decimal(12, 2)
+  currency          String         @default("INR")
+  status            PaymentStatus  @default(PENDING)
+  environment       Environment    @default(TEST)
+  
+  customerName      String?
+  customerEmail     String?
+  customerPhone     String?
+  description       String?
+
+  paymentProvider   String         @default("MockUPIProvider")
+  providerPaymentId String?
+  paymentMethod     String         @default("UPI_QR") // UPI_QR, UPI_INTENT, UPI_COLLECT
+  upiVpa            String?        // customer VPA if supplied
+  rrn               String?        // 12-digit UPI Retrieval Reference Number
+
+  fee               Decimal        @default(0) @db.Decimal(12, 2)
+  tax               Decimal        @default(0) @db.Decimal(12, 2)
+  netAmount         Decimal        @default(0) @db.Decimal(12, 2)
+
+  idempotencyKey    String?
+  paymentLinkId     String?
+  paymentLink       PaymentLink?   @relation(fields: [paymentLinkId], references: [id], onDelete: SetNull)
+  paymentPageId     String?
+  paymentPage       PaymentPage?   @relation(fields: [paymentPageId], references: [id], onDelete: SetNull)
+
+  events            PaymentEvent[]
+  ledgerEntries     LedgerEntry[]
+
+  expiresAt         DateTime?
+  createdAt         DateTime       @default(now())
+  updatedAt         DateTime       @updatedAt
+
+  @@unique([merchantId, merchantOrderId, environment])
+  @@index([merchantId, status])
+  @@index([status])
+  @@index([createdAt])
+  @@index([environment])
+}
+
+model PaymentEvent {
+  id        String   @id @default(uuid())
+  paymentId String
+  payment   Payment  @relation(fields: [paymentId], references: [id], onDelete: Cascade)
+  eventType String
+  payload   Json?
+  createdAt DateTime @default(now())
+
+  @@index([paymentId])
+}
+
+model PaymentLink {
+  id                    String      @id @default(uuid())
+  merchantId            String
+  merchant              Merchant    @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  slug                  String      @unique
+  title                 String
+  description           String?
+  amount                Decimal     @db.Decimal(12, 2)
+  currency              String      @default("INR")
+  status                LinkStatus  @default(ACTIVE)
+  expiresAt             DateTime?
+  maxPayments           Int?
+  paymentCount          Int         @default(0)
+  customerNameRequired  Boolean     @default(true)
+  customerPhoneRequired Boolean     @default(true)
+  customerEmailRequired Boolean     @default(true)
+  environment           Environment @default(TEST)
+  payments              Payment[]
+  createdAt             DateTime    @default(now())
+  updatedAt             DateTime    @updatedAt
+
+  @@index([merchantId])
+  @@index([slug])
+}
+
+model PaymentPage {
+  id                 String      @id @default(uuid())
+  merchantId         String
+  merchant           Merchant    @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  slug               String      @unique
+  title              String
+  description        String?
+  logoUrl            String?
+  brandName          String?
+  amountMode         AmountMode  @default(FIXED)
+  fixedAmount        Decimal?    @db.Decimal(12, 2)
+  successRedirectUrl String?
+  failureRedirectUrl String?
+  status             LinkStatus  @default(ACTIVE)
+  environment        Environment @default(TEST)
+  payments           Payment[]
+  createdAt          DateTime    @default(now())
+  updatedAt          DateTime    @updatedAt
+
+  @@index([merchantId])
+  @@index([slug])
+}
+
+model Settlement {
+  id            String           @id @default(uuid())
+  merchantId    String
+  merchant      Merchant         @relation(fields: [merchantId], references: [id], onDelete: Restrict)
+  amount        Decimal          @db.Decimal(12, 2)
+  currency      String           @default("INR")
+  status        SettlementStatus @default(PENDING)
+  periodStart   DateTime
+  periodEnd     DateTime
+  utr           String?
+  settledAt     DateTime?
+  notes         String?
+  grossAmount   Decimal          @default(0) @db.Decimal(12, 2)
+  totalFees     Decimal          @default(0) @db.Decimal(12, 2)
+  totalRefunds  Decimal          @default(0) @db.Decimal(12, 2)
+  ledgerEntries LedgerEntry[]
+  createdAt     DateTime         @default(now())
+  updatedAt     DateTime         @updatedAt
+
+  @@index([merchantId, status])
+  @@index([status])
+}
+
+model LedgerEntry {
+  id           String          @id @default(uuid())
+  merchantId   String
+  merchant     Merchant        @relation(fields: [merchantId], references: [id], onDelete: Restrict)
+  paymentId    String?
+  payment      Payment?        @relation(fields: [paymentId], references: [id], onDelete: SetNull)
+  settlementId String?
+  settlement   Settlement?     @relation(fields: [settlementId], references: [id], onDelete: SetNull)
+  type         LedgerType
+  amount       Decimal         @db.Decimal(12, 2)
+  direction    LedgerDirection
+  description  String
+  environment  Environment     @default(TEST)
+  createdAt    DateTime        @default(now())
+
+  @@index([merchantId, environment])
+  @@index([type])
+  @@index([createdAt])
+}
+
+model WebhookDelivery {
+  id           String   @id @default(uuid())
+  merchantId   String
+  merchant     Merchant @relation(fields: [merchantId], references: [id], onDelete: Cascade)
+  event        String
+  url          String
+  payload      Json
+  signature    String
+  status       String   // PENDING, SUCCESS, FAILED
+  statusCode   Int?
+  responseBody String?
+  attempts     Int      @default(1)
+  nextRetryAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  @@index([merchantId])
+  @@index([status])
+}
+
+model AuditLog {
+  id        String   @id @default(uuid())
+  actor     String   // e.g. email or "SYSTEM"
+  actorRole String   // ADMIN, MERCHANT, SYSTEM
+  action    String   // e.g. ADMIN_APPROVED_MERCHANT
+  entity    String   // MERCHANT, SETTLEMENT, PAYMENT, API_KEY
+  entityId  String
+  oldValue  Json?
+  newValue  Json?
+  ip        String?
+  userAgent String?
+  timestamp DateTime @default(now())
+
+  @@index([entity, entityId])
+  @@index([actor])
+  @@index([timestamp])
+}
+
+model IdempotencyRecord {
+  id             String      @id @default(uuid())
+  merchantId     String
+  key            String
+  environment    Environment @default(TEST)
+  responseStatus Int
+  responseBody   Json
+  createdAt      DateTime    @default(now())
+
+  @@unique([merchantId, key, environment])
+  @@index([createdAt])
+}

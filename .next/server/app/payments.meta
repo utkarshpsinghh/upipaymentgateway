@@ -1,0 +1,15 @@
+{
+  "headers": {
+    "x-nextjs-stale-time": "300",
+    "x-nextjs-prerender": "1",
+    "x-next-cache-tags": "_N_T_/layout,_N_T_/payments/layout,_N_T_/payments/page,_N_T_/payments"
+  },
+  "routeCache": {
+    "key": "/route-cache/APP_PAGE/e09e330250965f3003bd54a989eca1c857bb78fb802422d47d86ab02b37f9545/$/payments",
+    "owner": {
+      "kind": "APP_PAGE",
+      "sourceRoute": "/payments/page"
+    },
+    "isFallback": false
+  }
+}
