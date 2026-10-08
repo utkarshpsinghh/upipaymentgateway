@@ -48,8 +48,17 @@ export default function PaymentLinkForm({
         throw new Error(data.error || "Failed to proceed to payment");
       }
 
-      // Redirect to hosted checkout
-      window.location.href = data.paymentUrl;
+      // Redirect to hosted checkout on current domain
+      if (data.paymentId) {
+        router.push(`/pay/${data.paymentId}`);
+      } else if (data.paymentUrl) {
+        try {
+          const path = new URL(data.paymentUrl, window.location.origin).pathname;
+          router.push(path);
+        } catch {
+          window.location.href = data.paymentUrl;
+        }
+      }
     } catch (err: any) {
       setError(err.message);
       setSubmitting(false);

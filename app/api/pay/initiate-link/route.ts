@@ -7,6 +7,10 @@ export async function POST(req: NextRequest) {
     const body = await req.json().catch(() => ({}));
     const { linkSlug, pageSlug, customAmount, customer } = body;
 
+    const host = req.headers.get("x-forwarded-host") || req.headers.get("host");
+    const proto = req.headers.get("x-forwarded-proto") || "https";
+    const origin = host ? `${proto}://${host}` : "";
+
     if (linkSlug) {
       const link = await prisma.paymentLink.findUnique({
         where: { slug: linkSlug },
@@ -42,7 +46,13 @@ export async function POST(req: NextRequest) {
         environment: link.environment,
       });
 
-      return NextResponse.json({ success: true, paymentUrl: payment.payment_url });
+      const dynamicPaymentUrl = origin ? `${origin}/pay/${payment.payment_id}` : payment.payment_url;
+
+      return NextResponse.json({
+        success: true,
+        paymentId: payment.payment_id,
+        paymentUrl: dynamicPaymentUrl,
+      });
     }
 
     if (pageSlug) {
@@ -78,11 +88,21 @@ export async function POST(req: NextRequest) {
         environment: page.environment,
       });
 
-      return NextResponse.json({ success: true, paymentUrl: payment.payment_url });
+      const dynamicPaymentUrl = origin ? `${origin}/pay/${payment.payment_id}` : payment.payment_url;
+
+      return NextResponse.json({
+        success: true,
+        paymentId: payment.payment_id,
+        paymentUrl: dynamicPaymentUrl,
+      });
     }
 
     return NextResponse.json({ error: "Missing link or page identifier" }, { status: 400 });
   } catch (error: any) {
-    return NextResponse.json({ error: error.message }, { status: 500 });
+    console.error("Initiate payment error:", error);
+    return NextResponse.json(
+      { error: error?.message || "Failed to initiate payment" },
+      { status: 500 }
+    );
   }
 }

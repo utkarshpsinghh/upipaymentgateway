@@ -51,7 +51,16 @@ export default function PaymentPageForm({
         throw new Error(data.error || "Failed to proceed to payment");
       }
 
-      window.location.href = data.paymentUrl;
+      if (data.paymentId) {
+        window.location.href = `/pay/${data.paymentId}`;
+      } else if (data.paymentUrl) {
+        try {
+          const path = new URL(data.paymentUrl, window.location.origin).pathname;
+          window.location.href = path;
+        } catch {
+          window.location.href = data.paymentUrl;
+        }
+      }
     } catch (err: any) {
       setError(err.message);
       setSubmitting(false);
