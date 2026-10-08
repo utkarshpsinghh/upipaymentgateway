@@ -85,7 +85,7 @@ export async function POST(req: NextRequest) {
     link: {
       ...link,
       amount: Number(link.amount),
-      url: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/l/${link.slug}`,
+      url: `${(process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace(/\/+$/, "")}/l/${link.slug}`,
     },
   }, { status: 201 });
 }

@@ -83,7 +83,7 @@ export async function createPayment(params: CreatePaymentParams) {
     environment,
   });
 
-  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000";
+  const baseUrl = (process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace(/\/+$/, "");
   const paymentUrl = `${baseUrl}/pay/${paymentId}`;
   const expiresAt = new Date(Date.now() + 15 * 60 * 1000); // 15 minutes validity
 

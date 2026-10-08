@@ -84,7 +84,7 @@ export async function POST(req: NextRequest) {
     page: {
       ...page,
       fixedAmount: page.fixedAmount ? Number(page.fixedAmount) : null,
-      url: `${process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000"}/page/${page.slug}`,
+      url: `${(process.env.NEXT_PUBLIC_BASE_URL || "http://localhost:3000").replace(/\/+$/, "")}/page/${page.slug}`,
     },
   }, { status: 201 });
 }
